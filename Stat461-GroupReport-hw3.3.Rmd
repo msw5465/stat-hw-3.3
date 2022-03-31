@@ -323,8 +323,10 @@ Discuss the above topics, 2-3 paragraphs.
 
 The authors of this report would like to acknowledge their individual contributions to the report.
 
-+ [Your Name] contributed to the design of the study, collection of data, analysis of data, and writing of the report.
-+ [Your Name] contributed to the design of the study, participated in the study, analyzed the data, and the writing of the report.
++ Mitchell Wentzel contributed to the design of the study, collection of data, analysis of data, and writing of the report.
++ Mason Conrad contributed to the design of the study, collection of data, analysis of data, and writing of the report.
++ Luke Geier contributed to the design of the study, collection of data, analysis of data, and writing of the report.
++ Marquis Gee contributed to the design of the study, collection of data, analysis of data, and writing of the report.
 
 \newpage
 
