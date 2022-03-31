@@ -1,0 +1,323 @@
+---
+title: "STAT 461 - ANOVA/Post Hoc Report on Fruit Fly Longevity"
+author: "Mitchell Wentzel, Mason Conrad, Luke Geier, Marquis Gee"
+date: "March 31, 2022"
+output: pdf_document
+geometry: left=1in,right=1in,top=1in,bottom=1in
+urlcolor: blue
+header-includes:
+  - \usepackage{subfig}
+---
+
+## Set-Up R Environment
+
+```{r setup, include = FALSE}
+# Clean R Environment.
+rm(list = ls())
+
+# Setting Document Options.
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.align = "center"
+)
+
+# Add additional packages by name to the following list.
+packages <- c(
+  "tidyverse", "knitr", "kableExtra",
+  "psych", "car", "parameters"
+  ) 
+lapply(X = packages, FUN = library, character.only = TRUE)
+library(readr)
+
+# Loading Helper Files and Setting Global Options.
+options(knitr.kable.NA = "")
+options("contrasts" = c("contr.sum", "contr.poly"))
+source("https://raw.github.com/neilhatfield/STAT461/master/rScripts/ANOVATools.R")
+source("https://raw.github.com/neilhatfield/STAT461/master/rScripts/shadowgram.R")
+```
+
+## Load in the Data Set
+
+```{r data}
+fruitflies <- read.csv("fruitflies.csv", header = TRUE)
+head(fruitflies)
+```
+
+# Introduction and Background
+
+2-3 Paragraphs of an introduction to the data and purpose behind the investigation.
+
+End with the stated SRQ.
+
+# Study Design and Methods
+
+Here, write the narrative format of the study design-that is everything we've discussed in Unit 2. Incorporate the Hasse diagram, your hypotheses for any SRQs, any sample size considerations, as well as how you are going to handle the multiple comparison problem.
+
+Include access link to the data set source.
+
+## Hasse Diagram
+
+<!-- 
+
+{r hasse}
+modelLabels <- c("1 Mate fruitflies 1", "5 (condition of mates) 4", "126 (male fruitflies) 121")
+modelMatrix <- matrix(
+  data = c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE),
+  nrow = 3,
+  ncol = 3,
+  byrow = FALSE
+)
+hasseDiagram::hasse(
+ data = modelMatrix,
+ labels = modelLabels
+)
+
+
+-->
+
+Briefly assess the results of the code above.
+
+If applicable, this is a subsection where you describe the sample/population that you will be working with along demographic lines.
+
+# Exploration of the Data
+
+Complete EDA here. Include visualizations and descriptive statistics and explaion the group's thoughts through looking at each result.
+
+```{r}
+ggplot(fruitflies, aes(x=longevity)) + geom_histogram() + xlab("Longevity") + ylab("Count")
+```
+
+Explanation here
+
+```{r}
+ggplot(fruitflies, aes(x=condition, y=longevity)) + 
+  geom_boxplot(outlier.colour="red", outlier.shape=8,
+                outlier.size=3)
+```
+
+Explanation here
+
+```{r}
+shadowgram(
+  dataVec = fruitflies$longevity,
+  label = "Longevity",
+  layers = 50,
+  color = "navy",
+  aStep = 4
+)
+```
+
+Group discussion here.
+
+# Results
+
+This is the section of the report where you'll carry out an inferential methods.
+
+```{r}
+fruitflies$condition <- as.factor(fruitflies$condition)
+
+flyModel <- aov(
+  formula = longevity ~ condition,
+  data = fruitflies,
+  na.action = "na.omit"
+)
+```
+
+## Assumptions
+
+As this subsection's title implies, you'll discuss any assessment of assumptions in this section BEFORE you share any results for the related methods.
+
+```{r}
+car::qqPlot(
+x = flyModel$residuals,
+distribution = "norm",
+envelope = 0.90,
+id = FALSE,
+pch = 20,
+ylab = "Residuals"
+)
+```
+
+The qq-plot 
+
+```{r}
+ggplot(
+data = data.frame(
+residuals = flyModel$residuals,
+fitted = flyModel$fitted.values
+),
+mapping = aes(x = fitted, y = residuals)
+) +
+geom_point(size = 2) +
+theme_bw() +
+xlab("Fitted values (days)") +
+ylab("Residuals (days)")
+
+```
+
+The strip chart
+
+```{r}
+ggplot(
+data = data.frame(
+residuals = flyModel$residuals,
+index = 1:length(flyModel$residuals)
+),
+mapping = aes(x = index, y = residuals)
+) +
+geom_point(size = 1.5) +
+geom_line() +
+theme_bw() +
+geom_hline(
+yintercept = 0,
+linetype = "dashed",
+color = "red"
+) +
+xlab("Measurement order") +
+ylab("Residuals")
+
+```
+
+The index plot
+
+2-3 paragraphs, group discussion of the results of the assumptions.
+
+## Omnibus  
+
+MAKE A DECISION
+
+Parametric Case
+
+```{r parametricCase}
+parameters::model_parameters(
+  model = flyModel,
+  omega_squared = "raw",
+  eta_squared = "raw",
+  epsilon_squared = "raw"
+) %>%
+  knitr::kable(
+  digits = 4,
+  col.names = c(
+    "Source", "SS", "df", "MS", "F", "p-value",
+    "Omega Sq.", "Eta Sq.", "Epsilon Sq."), 
+  caption = "ANOVA Table for Fly Longevity Study",
+  booktabs = TRUE,
+  align = c("l", rep("c", 8))
+  ) %>%
+  kableExtra::kable_styling(
+    font_size = 10,
+    latex_options = c("HOLD_position")
+  )
+
+```
+
+Discuss the above results, 1 paragraph.
+
+```{r pointEstimates}
+pointEst <- dummy.coef(flyModel)
+pointEst <- unlist(pointEst)
+
+data.frame("Estimate" = pointEst) %>%
+  knitr::kable(
+  digits = 2,
+  caption = "Point Estimates from the Fly Longevity Study",
+  format = "latex",
+  booktabs = TRUE,
+  align = "c"
+  ) %>%
+  kableExtra::kable_styling(
+    font_size = 12,
+    latex_options = c("HOLD_position")
+  ) 
+
+```
+
+Discuss the above results, 1 paragraph.
+
+```{r nonparametricCase}
+flyKW <- kruskal.test(
+  formula = longevity ~ condition,
+  data = fruitflies,
+  na.action = "na.omit"
+)
+```
+
+Discuss the above results, 1 paragraph.
+
+## Post Hoc
+
+Introductory sentence or two for post hoc.
+
+MAKE A DECISION
+
+Parametric Case
+
+```{r tukeyHSD}
+hsdFLY <- TukeyHSD(
+  x = flyModel, # Your aov/lm object
+  conf.level = 0.94 # 1 -- Your overall Type I Error level
+)
+
+## Kable Code for Tukey HSD
+knitr::kable(
+  x = hsdFLY$condition, # Notice the factor's name
+  digits = 3,
+  caption = "Post Hoc Tukey HSD Comparisons",
+  col.names = c("Difference", "Lower Bound",
+                "Upper Bound", "Adj. p-Value"),
+  align = 'cccc',
+  booktabs = TRUE,
+) %>%
+  kableExtra::kable_styling(
+    bootstrap_options = c("condensed", "boardered"),
+    font_size = 12,
+    latex_options = "HOLD_position"
+  )
+
+```
+
+Discuss the above results, 1-2 paragraphs.
+
+```{r postHocES1}
+anova.PostHoc(flyModel) %>%
+  knitr::kable(
+    digits = 3,
+    caption = "Post Hoc Comparison Effect Sizes",
+    col.names = c("Pairwise Comparison","Cohen's d", "Hedge's g",
+                  "Prob. Superiority"),
+    align = 'lccc',
+    booktabs = TRUE
+  ) %>%
+  kableExtra::kable_styling(
+    bootstrap_options = c("condensed", "boardered"),
+    font_size = 12,
+    latex_options = "HOLD_position"
+  )
+
+```
+
+# Discussion and Limitations
+
+Discuss the above topics, 2-3 paragraphs.
+
+<!-- # References -->
+<!-- When applicable -->
+
+\newpage
+
+# Author Contributions
+
+The authors of this report would like to acknowledge their individual contributions to the report.
+
++ [Your Name] contributed to the design of the study, collection of data, analysis of data, and writing of the report.
++ [Your Name] contributed to the design of the study, participated in the study, analyzed the data, and the writing of the report.
+
+\newpage
+
+# Code Appendix
+
+```{r codeAppendix, ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}
+
+```
