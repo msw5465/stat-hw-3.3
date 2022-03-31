@@ -225,7 +225,9 @@ parameters::model_parameters(
 
 ```
 
-Discuss the above results, 1 paragraph.
+Our p-value of 0 is less than our unusualness threshold of 0.03, therefore we reject the null hypothesis and conclude that the mating condition of a fruitfly does have a statistically significant impact on the longevity of their remaining lifespan (in days).
+
+Now we will calculate and display the point estimates for each condition.
 
 ```{r pointEstimates}
 pointEst <- dummy.coef(flyModel)
