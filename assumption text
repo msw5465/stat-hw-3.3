@@ -1,0 +1,4 @@
+The qq-plot seems to satisfy the Gaussian assumption, as most of the points are distributed within the envelope of the plot.
+The strip chart seems to satisfy the homoscedasticity condition, as there seems to be no significant difference in variation of the residuals, or any patterns in the chart.
+The index plot seems to satisfy the independence of observations condition, as there is no discernible pattern of the residuals in the plot.
+The Gaussian, homoscedasticity, and independence of observations assumptions all seem to be satisfied, so we can make the decision to use the parametric ANOVA F test for our confirmatory data analysis. 
