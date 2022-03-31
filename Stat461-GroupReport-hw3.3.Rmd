@@ -11,6 +11,8 @@ header-includes:
 
 ## Set-Up R Environment
 
+In the below code chunk, we will be running all of the necessary setup functions needed to compute the ANOVA/Post Hoc Analysis for the longevity of fruitfly lifespans.
+
 ```{r setup, include = FALSE}
 # Clean R Environment.
 rm(list = ls())
@@ -40,16 +42,26 @@ source("https://raw.github.com/neilhatfield/STAT461/master/rScripts/shadowgram.R
 
 ## Load in the Data Set
 
+In the following code chunk, we will be loading in the data set by using the read.csv() function, and specifying that the data set has a header (which indicates that column names exist in our csv file).
+
 ```{r data}
+# Load in the fruitflies.csv data set.
 fruitflies <- read.csv("fruitflies.csv", header = TRUE)
+
+# Produce a head of the data set, which will show us the first few rows and the
+# contents of our data frame.
 head(fruitflies)
 ```
 
+As we can see from the data head above, we have two columns in our fruitflies data frame. We have a column called "longevity" and a column called "condition." The "longevity" column is the value for the total lifespan of the fruitfly, in days. The "condition" column is a factor value that tells us the mating condition of the fruitfly. 
+
 # Introduction and Background
 
-2-3 Paragraphs of an introduction to the data and purpose behind the investigation.
+The following report will detail the full data analysis for an ANOVA and Post Hoc Analysis of the fruitfly data set. The lifespan of a fruitfly can range from very little days up to hundreds of days. While there are many factors that could determine the lifespan of a fruitfly, the mating condition of a fruitfly has been claimed to be potentially significant in determining how long a fruitfly remains alive. 
 
-End with the stated SRQ.
+Scientists have been able to mate fruitflies based on 5 different mating conditions and recorded the total days the fruitflies remained alive after they mated. The 5 mating conditions are "Null", "OnePreg", "OneVirgin", "EightPreg", and "EightVirgin". With 126 records of fruitfly mating condition and longevity of remaining lifespan, that leads us to our SRQ...
+
+Does the mating condition of a fruitfly significantly affect the longevity of their remaining lifespan (in days)?
 
 # Study Design and Methods
 
