@@ -248,16 +248,6 @@ data.frame("Estimate" = pointEst) %>%
 
 Discuss the above results, 1 paragraph.
 
-```{r nonparametricCase}
-flyKW <- kruskal.test(
-  formula = longevity ~ condition,
-  data = fruitflies,
-  na.action = "na.omit"
-)
-```
-
-Discuss the above results, 1 paragraph.
-
 ## Post Hoc
 
 Introductory sentence or two for post hoc.
@@ -310,12 +300,15 @@ anova.PostHoc(flyModel) %>%
 
 ```
 
-# Discussion and Limitations
+# Limitations
 
-Discuss the above topics, 2-3 paragraphs.
+As with any other statistical research analysis, our group did notice some short-comings and limitations to our study. We mainly indicated that there are many additional attributes that could have been tracked in order to receive more accurate and thorough results through our ANOVA/Post Hoc Analysis. A few additional attributes that could be seen as limitations to our research would be:
 
-<!-- # References -->
-<!-- When applicable -->
++ How many days old was the fruitfly before the mating took place?
++ Instead of testing only 1 and 8 for pregnant and virgin, why not add in 1 through 8?
++ How many total fruitflies were in the offspring of each instance of mating?
+
+These are just a few of the limitations in the data that we noticed in our group. Adding these additional attributes could be beneficial to future studies regarding similar fruitfly data. 
 
 \newpage
 
