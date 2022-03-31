@@ -1,0 +1,160 @@
+```{r setup, include=FALSE}
+# Setting Document Options
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.align = "center"
+)
+
+# Add additional packages by name to the following list
+packages <- c(
+  "tidyverse", "knitr", "kableExtra",
+  "psych", "car", "parameters"
+  ) 
+lapply(X = packages, FUN = library, character.only = TRUE)
+
+# Loading Helper Files and Setting Global Options
+options(knitr.kable.NA = "")
+options("contrasts" = c("contr.sum", "contr.poly"))
+source("https://raw.github.com/neilhatfield/STAT461/master/rScripts/ANOVATools.R")
+
+source("https://raw.github.com/neilhatfield/STAT461/master/rScripts/shadowgram.R")
+```
+
+## Load data
+
+```{r data}
+library(readr)
+fruitflies <- read_csv("fruitflies.csv")
+View(fruitflies)
+```
+
+## Introduction and Background
+
+
+
+
+## Hasse Diagram
+```{r hasse}
+modelLabels <- c("1 Mate fruitflies 1", "5 (condition of mates) 4", "126 (male fruitflies) 121")
+modelMatrix <- matrix(
+  data = c(FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, TRUE, FALSE),
+  nrow = 3,
+  ncol = 3,
+  byrow = FALSE
+)
+hasseDiagram::hasse(
+ data = modelMatrix,
+ labels = modelLabels
+)
+```
+
+hypothesis / error / test type
+
+
+
+
+## Exploration of the data
+```{r}
+ggplot(fruitflies, aes(x=longevity)) + geom_histogram()
+```
+
+
+```{r}
+ggplot(fruitflies, aes(x=condition, y=longevity)) + 
+  geom_boxplot(outlier.colour="red", outlier.shape=8,
+                outlier.size=3)
+```
+
+```{r}
+shadowgram(
+  dataVec = fruitflies$longevity,
+  label = "Longevity",
+  layers = 50,
+  color = "navy",
+  aStep = 4
+)
+```
+
+
+```{r}
+
+```
+
+TALK ABOUT ALL OF THESE GRAPHS AND THINGS
+
+
+## Results
+
+```{r}
+flyModel <- aov(
+  formula = longevity ~ condition,
+  data = fruitflies,
+  na.action = "na.omit"
+)
+```
+
+## Assumptions
+```{r}
+car::qqPlot(
+x = flyModel$residuals,
+distribution = "norm",
+envelope = 0.90,
+id = FALSE,
+pch = 20,
+ylab = "Residuals"
+)
+```
+
+The qq-plot 
+
+```{r}
+ggplot(
+data = data.frame(
+residuals = flyModel$residuals,
+fitted = flyModel$fitted.values
+),
+mapping = aes(x = fitted, y = residuals)
+) +
+geom_point(size = 2) +
+theme_bw() +
+xlab("Fitted values (days)") +
+ylab("Residuals (days)")
+
+```
+
+
+The strip chart
+
+```{r}
+ggplot(
+data = data.frame(
+residuals = flyModel$residuals,
+index = 1:length(flyModel$residuals)
+),
+mapping = aes(x = index, y = residuals)
+) +
+geom_point(size = 1.5) +
+geom_line() +
+theme_bw() +
+geom_hline(
+yintercept = 0,
+linetype = "dashed",
+color = "red"
+) +
+xlab("Measurement order") +
+ylab("Residuals")
+
+```
+
+The index plot
+
+
+## Making our decision
+
+The assumptions all 
+
+
+
+
